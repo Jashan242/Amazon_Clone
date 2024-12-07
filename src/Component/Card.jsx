@@ -48,7 +48,7 @@ export default function Card() {
                 ))}
               </div>
               <a 
-                className="text-[#007185] text-sm hover:text-[#c7511f] hover:underline" 
+                className="text-[#007185] text-md hover:text-[#c7511f] hover:underline py-10 font-semibold" 
                 href={item.redirect.url}
               >
                 {item.redirect.label}

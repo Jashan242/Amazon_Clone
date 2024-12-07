@@ -35,7 +35,7 @@ const AppRouter=createBrowserRouter([
         element:<Signin/>
       },
       {
-        path:"/product-detail/:productId",
+        path:"/product/:id",
         element:<ProductDetail/>
       }
     ]
