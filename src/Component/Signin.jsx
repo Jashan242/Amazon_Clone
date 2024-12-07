@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AmazonLogo from "../assets/amazon.svg";
-import { createUserWithEmailPassword, signInUserWithEmailPassword } from "../firebase/Auth";
-import { auth } from '../firebase/utils';
-import { createUserWithGoogle } from "../firebase/Auth";
-
+import {
+  createUserWithEmailPassword,
+  signInUserWithEmailPassword,
+  createUserWithGoogle,
+} from "../firebase/Auth";
 
 export const Signin = () => {
   const navigate = useNavigate();
@@ -14,70 +15,60 @@ export const Signin = () => {
   const [password, setPassword] = useState("");
   const [passwordView, setPasswordView] = useState(false);
 
-  const handleSignIn = async (e) => {
+  const handleAuthSubmit = async (e) => {
     e.preventDefault();
-    if(email && password && email.includes('@')){
-      try{
-          if(isSignin){
-            await signInUserWithEmailPassword(email, password);
-            navigate('/');
-          }else{
-            await createUserWithEmailPassword(email, password);
-            navigate('/');
-          }
-        // await createUserWithEmailPassword(email, password);
-        // // await createUserWithGoogle();
-        // console.log('User Created Successfully');
-      }catch(error){
+    if (!email || !password || !email.includes("@")) {
+      setError("Please provide a valid email and password.");
+      return;
+    }
+    try {
+      if (isSignin) {
+        // Try signing in the user
+        await signInUserWithEmailPassword(email, password);
+        navigate("/");
+      } else {
+        // Create a new user
+        await createUserWithEmailPassword(email, password);
+        navigate("/");
+      }
+    } catch (error) {
+      if (isSignin && error.code === "auth/user-not-found") {
+        // Prompt to create account if user is not registered
+        setError("User not found. Switching to Sign Up.");
+        setSignin(false);
+      } else {
         setError(error.message);
       }
     }
   };
 
-  const handleAuth= async (e)=>{
+  const handleGoogleSignIn = async (e) => {
     e.preventDefault();
-    try{
+    try {
       await createUserWithGoogle();
-      navigate('/');
-    }catch(error){
+      navigate("/");
+    } catch (error) {
       setError(error.message);
     }
-  } 
+  };
 
   return (
     <div className="relative flex flex-col gap-4 w-full max-w-screen overflow-x-hidden h-screen mt-[100px]">
       <div className="flex flex-col items-center gap-4 p-4">
-        <Link
-          className="cursor-pointer flex amazon-logo items-start min-w-24"
-          to={"/"}
-        >
-          <img
-            // src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/603px-Amazon_logo.svg.png?20220213013322"
-            src={AmazonLogo}
-            alt="Amazon Logo"
-            height={38}
-            className="h-9"
-          />
-          {/* <span>.in</span> */}
+        <Link className="cursor-pointer flex amazon-logo items-start min-w-24" to={"/"}>
+          <img src={AmazonLogo} alt="Amazon Logo" height={38} className="h-9" />
         </Link>
         <div className="flex flex-col border rounded divide-y w-min gap-4 p-5">
           <div className="flex flex-col w-min gap-2.5">
-            <span className="text-3xl mb-1.5">
-              Sign {isSignin ? "in" : "up"}
-            </span>
-            <form
-              className="flex flex-col gap-1.5"
-              onSubmit={(e) => handleSignIn(e)}
-            >
-              <span className="text-xs font-semibold">
-                Email or mobile phone number
-              </span>
+            <span className="text-3xl mb-1.5">Sign {isSignin ? "in" : "up"}</span>
+            <form className="flex flex-col gap-1.5" onSubmit={handleAuthSubmit}>
+              <span className="text-xs font-semibold">Email or mobile phone number</span>
               <input
                 className="text-sm rounded-sm border active:border-[#017184] border-black outline outline-4 active:outline-[#c8f3fa] hover:outline-[#c8f3fa] outline-white w-72 py-1 px-2.5"
                 type="email"
                 value={email}
                 placeholder="Enter your Email Address!"
-                onInput={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
               />
               {email && (
                 <div className="relative flex justify-end items-center w-72">
@@ -86,7 +77,7 @@ export const Signin = () => {
                     type={passwordView ? "text" : "password"}
                     value={password}
                     placeholder="Enter your password!"
-                    onInput={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <img
                     className="absolute cursor-pointer px-1"
@@ -113,23 +104,12 @@ export const Signin = () => {
             {!isSignin && (
               <span className="text-xs text-wrap">
                 By continuing, you agree to Amazon's
-                <span className="text-blue-700">Conditions of Use</span> and
-                <span className="text-blue-700">Privacy Notice.</span>
+                <span className="text-blue-700"> Conditions of Use </span> and
+                <span className="text-blue-700"> Privacy Notice.</span>
               </span>
             )}
-            <div className="flex flex-col py-2.5">
-              {/* <span 
-                className="text-xs text-blue-700" 
-                onClick={() => {
-                  auth.signOut();
-                  console.log('signed out');
-                }}
-              > */}
-                Need help?
-              {/* </span>  */}
-            </div>
+            <div className="flex flex-col py-2.5">Need help?</div>
           </div>
-
           <div className="flex flex-col gap-1.5 pt-4">
             <span className="text-xs font-semibold">Buying for work?</span>
             <span className="text-xs text-blue-700 font-medium">
@@ -137,7 +117,6 @@ export const Signin = () => {
             </span>
           </div>
         </div>
-
         <div className="flex items-center text-xs text-gray-500 gap-2 w-80">
           <hr className="flex-1" />
           <span>
@@ -146,15 +125,19 @@ export const Signin = () => {
           <hr className="flex-1" />
         </div>
         <button
-          className={`text-xs font-medium border shadow scale-105 rounded-lg w-80 active:bg-gray-100 py-1.5 px-2`}
+          className="text-xs font-medium border shadow scale-105 rounded-lg w-80 active:bg-gray-100 py-1.5 px-2"
           onClick={() => setSignin(!isSignin)}
         >
           {isSignin
             ? "Create your Amazon account"
             : "Login to your Amazon account"}
         </button>
-        <button className="text-xs font-medium border shadow scale-105 rounded-lg w-80 active:bg-gray-100 py-1.5 px-2" 
-        onClick={(e)=>{handleAuth(e); navigate('/')}}>Google sign in</button>
+        <button
+          className="text-xs font-medium border shadow scale-105 rounded-lg w-80 active:bg-gray-100 py-1.5 px-2"
+          onClick={handleGoogleSignIn}
+        >
+          Google Sign In
+        </button>
       </div>
       <div className="bg-[#fcfcfc] flex flex-col items-center text-xs flex-1 gap-3 h-max">
         <div className="auth-footer-seperation h-0.5 w-full"></div>
