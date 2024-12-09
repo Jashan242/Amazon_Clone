@@ -1,4 +1,5 @@
 import logo from "../assets/amazon.svg";
+import logo1 from "../assets/logo.png";
 import location from "../assets/location.svg";
 import search from "../assets/magnifying.svg";
 import cart from "../assets/cart.svg";
@@ -15,6 +16,7 @@ export default function Header() {
   const { cartItems } = useContext(CartContext);
   const [user, setUser] = useState(null);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filterOptions = [
     { label: "All", value: "all" },
@@ -73,24 +75,30 @@ export default function Header() {
     setDropdownVisible(!isDropdownVisible); // Toggle dropdown visibility
   };
 
-  
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredCategories = categories.filter(category =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <header className="w-full m-0 p-0 fixed top-0 left-0 right-0 z-30">
       <div className="amazon-header flex gap-4 items-center px-2 py-1 bg-[#131921] text-nowrap">
         <img
-          className="amazon-branding-logo flex p-1 items-end self-stretch rounded-sm outline-none max-w-[70px] hover:outline-[1.4px] hover:outline-white"
-          src={logo}
+          className="amazon-branding-logo flex p-1 items-end self-stretch rounded-sm outline-none object-contain max-w-[100px] hover:outline-[1.4px] hover:outline-white"
+          src={logo1}
           alt="amazon-logo"
         ></img>
 
-        <div className="amazon-order-location flex gap-[2px] justify-center p-1 rounded-sm items-center outline-none hover:outline-[1.4px] hover:outline-white">
+        <div className="amazon-order-location flex gap-[2px] justify-center rounded-sm items-center outline-none hover:outline-[1.4px] hover:outline-white">
           <img className="location-icon w-4 mb-1" src={location}></img>
-          <div className="location-text-container flex flex-col text-white gap-0">
-            <span className="current-location">
-              Delivering to Kashipur 244713
+          <div className="location-text-container flex flex-col text-white ">
+            <span className="current-location text-sm">
+              Delivering to Kashipur
             </span>
-            <span className="update-location">Update location</span>
+            <span className="update-location text-xs font-bold">Update location</span>
           </div>
         </div>
         <div className="search-bar flex flex-1 min-w-[198px] min-h-10 rounded bg-white overflow-hidden">
@@ -101,6 +109,8 @@ export default function Header() {
             className="search-input min-h-full p-2 border-none text-[#111] text-sm flex-1"
             type="search"
             placeholder="Search Amazon.in"
+            value={searchQuery}
+            onChange={handleSearchChange}
           />
           <button
             className="search-btn rounded-none bg-[#febd69] p-1"
@@ -180,7 +190,7 @@ export default function Header() {
       </div>
       <div className="flex items-center gap-2 px-2 py-1 bg-[#232f3e] text-white">
         <CategoryFilter />
-        {categories.map((category, index) => (
+        {filteredCategories.map((category, index) => (
           <div
             key={index}
             className="flex p-2 border-white cursor-pointer whitespace-nowrap"

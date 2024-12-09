@@ -6,7 +6,7 @@ export default function CategoryFilter() {
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   return (
-    <div className="bg-[#232f3e] w-full category-filter">
+    <div className="bg-[#232f3e] category-filter">
         <div className="flex items-center gap-2 text-white 
           overflow-x-auto whitespace-nowrap">
         <button 

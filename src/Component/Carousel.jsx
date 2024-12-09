@@ -35,7 +35,7 @@ export default function Carousel() {
 
   return (
     <div className="relative w-full mt-[70px]">
-      <div className="relative w-full h-[900px]">
+      <div className="relative w-full h-[600px]">
         {carouselImages.map((image, index) => (
           <div
             key={index}
@@ -61,7 +61,7 @@ export default function Carousel() {
           onClick={goToNext}
           className="absolute right-0 top-1/2 -translate-y-1/2 hover:bg-white px-2 py-4 cursor-pointer z-20"
         >
-          <span className="text-6xl font-bold">›</span>
+          <span className="text-6xl font-bold ">›</span>
         </button>
 
         {/* Gradient Overlay */}

@@ -29,11 +29,11 @@ import outdoor from '../assets/outdoor.jpg';
 
 export default function Card() {
   return (
-    <div className="absolute top-[650px] left-0 right-0 z-10">
+    <div className="absolute -mt-[1000px] left-0 right-0 z-10">
       <div className="w-full max-w-[1500px] mx-auto px-4">
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
           {data.map((item) => (
-            <div className='bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow' key={item.title}>
+            <div className='bg-white p-6 shadow-md hover:shadow-lg transition-shadow' key={item.title}>
               <h3 className='text-xl font-bold mb-4'>{item.title}</h3>
               <div className='grid grid-cols-2 gap-3'>
                 {item.items.slice(0, 4).map((element) => (
